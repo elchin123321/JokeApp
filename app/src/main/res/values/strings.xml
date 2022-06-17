@@ -3,4 +3,7 @@
     <string name="get_joke">GET JOKE</string>
     <string name="no_connection">No internet connection</string>
     <string name="service_unaviable">Service is unavailable</string>
+    <string name="login">login</string>
+    <string name="detect">Detect</string>
+    <string name="invalid_name">invalid name</string>
 </resources>

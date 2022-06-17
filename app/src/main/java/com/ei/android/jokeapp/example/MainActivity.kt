@@ -1,4 +1,4 @@
-package com.ei.android.jokeapp
+package com.ei.android.jokeapp.example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.ei.android.jokeapp.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             viewModel.getJoke()
         }
 
-        viewModel.init(object: TextCallback{
+        viewModel.init(object: TextCallback {
             override fun provideText(text: String)=runOnUiThread{
                 button.isEnabled = true
                 progressBar.visibility = View.INVISIBLE

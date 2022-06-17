@@ -1,5 +1,5 @@
-package com.ei.android.jokeapp 
-class TestModel(resourceManager: ResourceManager): Model{
+package com.ei.android.jokeapp.example
+class TestModel(resourceManager: ResourceManager): Model {
     private var callback: ResultCallback? = null
 
     private var count = 0

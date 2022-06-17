@@ -1,4 +1,4 @@
-package com.ei.android.jokeapp
+package com.ei.android.jokeapp.example
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,9 +1,9 @@
-package com.ei.android.jokeapp
+package com.ei.android.jokeapp.example
 
 import android.content.Context
 import androidx.annotation.StringRes
 
-class BaseResourceManager(private val context: Context): ResourceManager{
+class BaseResourceManager(private val context: Context): ResourceManager {
     override fun getString(stringResID: Int): String = context.getString(stringResID)
 
 

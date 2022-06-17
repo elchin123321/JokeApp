@@ -1,4 +1,4 @@
-package com.ei.android.jokeapp
+package com.ei.android.jokeapp.example
 
 import retrofit2.Call
 import retrofit2.Response
@@ -7,7 +7,7 @@ import java.net.UnknownHostException
 class BaseModel(
     private val service: JokeService,
     private val resourceManager: ResourceManager
-):Model {
+): Model {
 
     private var callback: ResultCallback? = null
     private val noConnection by lazy { NoConnection(resourceManager) }

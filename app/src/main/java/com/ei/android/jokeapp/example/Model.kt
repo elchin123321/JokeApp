@@ -1,4 +1,4 @@
-package com.ei.android.jokeapp
+package com.ei.android.jokeapp.example
 
 interface Model {
     fun getJoke()
