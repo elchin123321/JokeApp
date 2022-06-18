@@ -1,13 +1,18 @@
 package com.ei.android.jokeapp.example
 
+import androidx.annotation.DrawableRes
+
 class ViewModel(private val model: Model) {
-    private var callBack: TextCallback? = null
-    fun init(callback: TextCallback){
+    private var callBack: DataCallback? = null
+    fun init(callback: DataCallback){
         this.callBack = callBack
         model.init(object : ResultCallback {
-            override fun provideSuccess(data: Joke) = callback.provideText(data.getJokeUi())
+            override fun provide(data: Joke){
+                callback?.let {
+                    data.map(it)
+                }
+            }
 
-            override fun provideError(error: JokeFailure) = callback.provideText(error.getMessage())
 
         })
     }
@@ -19,8 +24,13 @@ class ViewModel(private val model: Model) {
         callBack = null
         model.clear()
     }
+
+    fun chooseFavorites(checked: Boolean) {
+
+    }
 }
 
-interface TextCallback{
+interface DataCallback{
     fun provideText(text: String)
+    fun provideIconRes(@DrawableRes id:Int)
 }

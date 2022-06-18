@@ -10,5 +10,5 @@ data class ServiceDTO(
     @SerializedName("image")
     private val image:String
 ){
-    fun toJoke() = Joke(answer,image)
+    fun toJoke() = BaseJoke(answer,image)
 }

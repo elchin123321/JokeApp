@@ -11,9 +11,9 @@ class TestModel(resourceManager: ResourceManager): Model {
         Thread {
             Thread.sleep(1000)
             when(count){
-                0->callback?.provideSuccess(Joke("testText","punchline"))
-                1->callback?.provideError(noConnection)
-                2->callback?.provideError(serviceUnavailable)
+                0->callback?.provide(BaseJoke("testText","punchline"))
+                1->callback?.provide(FavoriteJoke("favoriteJoke","favorite punchline"))
+                2->callback?.provide(FailedJoke(serviceUnavailable.getMessage()))
             }
             count++
         }.start()

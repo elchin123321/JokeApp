@@ -16,17 +16,17 @@ class BaseModel(
         service.getJoke().enqueue(object : retrofit2.Callback<ServiceDTO>{
             override fun onResponse(call: Call<ServiceDTO>, response: Response<ServiceDTO>) {
                 if(response.isSuccessful){
-                    callback?.provideSuccess(response.body()!!.toJoke())
+                    callback?.provide(response.body()!!.toJoke())
                 }else{
-                    callback?.provideError(serviceUnavailable)
+                    callback?.provide(FailedJoke(serviceUnavailable.getMessage()))
                 }
             }
 
             override fun onFailure(call: Call<ServiceDTO>, t: Throwable) {
                 if(t is UnknownHostException)
-                    callback?.provideError(noConnection)
+                    callback?.provide(FailedJoke(serviceUnavailable.getMessage()))
                 else
-                    callback?.provideError(serviceUnavailable)
+                    callback?.provide(FailedJoke(serviceUnavailable.getMessage()))
             }
         })
     }
