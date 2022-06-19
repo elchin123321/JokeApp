@@ -13,6 +13,6 @@ class JokeApp: Application() {
             .baseUrl("https://www.google.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        viewModel = ViewModel(TestModel(BaseResourceManager(this)))
+        viewModel = ViewModel(BaseModel(TestCacheDataSource(),BaseCloudDataSource(retrofit.create(JokeService::class.java)),BaseResourceManager(this)))
     }
 }

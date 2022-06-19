@@ -5,37 +5,63 @@ import retrofit2.Response
 import java.net.UnknownHostException
 
 class BaseModel(
-    private val service: JokeService,
+    private val cacheDataSource: CacheDataSource,
+    private val cloudDataSource: CloudDataSource,
     private val resourceManager: ResourceManager
 ): Model {
 
-    private var callback: ResultCallback? = null
     private val noConnection by lazy { NoConnection(resourceManager) }
     private val serviceUnavailable by lazy { ServiceUnavailable(resourceManager) }
-    override fun getJoke() {
-        service.getJoke().enqueue(object : retrofit2.Callback<ServiceDTO>{
-            override fun onResponse(call: Call<ServiceDTO>, response: Response<ServiceDTO>) {
-                if(response.isSuccessful){
-                    callback?.provide(response.body()!!.toJoke())
-                }else{
-                    callback?.provide(FailedJoke(serviceUnavailable.getMessage()))
-                }
-            }
+    private val noCachedJokes by lazy{NoCachedJokes(resourceManager)}
 
-            override fun onFailure(call: Call<ServiceDTO>, t: Throwable) {
-                if(t is UnknownHostException)
-                    callback?.provide(FailedJoke(serviceUnavailable.getMessage()))
-                else
-                    callback?.provide(FailedJoke(serviceUnavailable.getMessage()))
-            }
-        })
+    private var jokeCallback:JokeCallback? = null
+
+    private var cachedJokeServerModel: JokeServerModel? = null
+    private var getJokeFromCache = false
+
+    override fun getJoke() {
+        if(getJokeFromCache){
+            cacheDataSource.getJoke(object : JokeCacheCallback{
+                override fun provide(jokeServerModel: JokeServerModel) {
+                    jokeCallback?.provide(jokeServerModel.toFavoriteJoke())
+                }
+
+                override fun fail() {
+                    jokeCallback?.provide(FailedJoke(noCachedJokes.getMessage()))
+                }
+
+            })
+        }else{
+            cloudDataSource.getJoke(object :JokeCloudCallback{
+                override fun provide(joke: JokeServerModel) {
+                    cachedJokeServerModel = joke
+                    jokeCallback?.provide(joke.toBaseJoke())
+                }
+
+                override fun fail(error: ErrorType) {
+                    cachedJokeServerModel = null
+                    val failure = if(error == ErrorType.NO_CONNECTION)noConnection else serviceUnavailable
+                    jokeCallback?.provide(FailedJoke(failure.getMessage()))
+                }
+            })
+        }
     }
 
-    override fun init(callback: ResultCallback) {
-        this.callback = callback
+    override fun init(callback: JokeCallback) {
+        this.jokeCallback = callback
     }
 
     override fun clear() {
-        callback = null
+        jokeCallback = null
+    }
+
+    override fun changeJokeStatus(jokeCallback: JokeCallback) {
+        cachedJokeServerModel?.change(cacheDataSource)?.let{
+            jokeCallback.provide(it)
+        }
+    }
+
+    override fun chooseDataSource(cached: Boolean) {
+        getJokeFromCache = cached
     }
 }

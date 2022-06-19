@@ -27,6 +27,7 @@
             android:layout_gravity="center"
             />
         <ImageButton
+            android:background="?selectableItemBackground"
             android:layout_gravity="center_vertical"
             android:id="@+id/iconView"
             android:src="@android:drawable/ic_input_add"

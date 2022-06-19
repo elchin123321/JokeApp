@@ -3,30 +3,35 @@ package com.ei.android.jokeapp.example
 import androidx.annotation.DrawableRes
 
 class ViewModel(private val model: Model) {
-    private var callBack: DataCallback? = null
-    fun init(callback: DataCallback){
-        this.callBack = callBack
-        model.init(object : ResultCallback {
-            override fun provide(data: Joke){
-                callback?.let {
-                    data.map(it)
-                }
+    private var dataCallback: DataCallback? = null
+    private val jokeCallback = object : JokeCallback{
+        override fun provide(data: Joke) {
+            dataCallback?.let{
+                data.map(it)
             }
+        }
 
+    }
+    fun init(callback: DataCallback){
+        dataCallback = callback
+        model.init(jokeCallback)
 
-        })
     }
 
     fun getJoke(){
         model.getJoke()
     }
     fun clear(){
-        callBack = null
+        dataCallback = null
         model.clear()
     }
 
-    fun chooseFavorites(checked: Boolean) {
+    fun chooseFavorites(favorites: Boolean) {
+        model.chooseDataSource(favorites)
+    }
 
+    fun changeJokeStatus() {
+        model.changeJokeStatus(jokeCallback)
     }
 }
 

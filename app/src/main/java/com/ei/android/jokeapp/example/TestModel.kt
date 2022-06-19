@@ -1,6 +1,6 @@
 package com.ei.android.jokeapp.example
 class TestModel(resourceManager: ResourceManager): Model {
-    private var callback: ResultCallback? = null
+    private var callback: JokeCallback? = null
 
     private var count = 0
 
@@ -19,11 +19,18 @@ class TestModel(resourceManager: ResourceManager): Model {
         }.start()
     }
 
-    override fun init(callback: ResultCallback) {
+    override fun init(callback: JokeCallback) {
         this.callback = callback
     }
 
     override fun clear() {
         callback = null
+    }
+
+    override fun changeJokeStatus(jokeCallback: JokeCallback) {
+
+    }
+
+    override fun chooseDataSource(favorites: Boolean) {
     }
 }
