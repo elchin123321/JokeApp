@@ -1,9 +1,5 @@
 package com.ei.android.jokeapp.example
 
-import retrofit2.Call
-import retrofit2.Response
-import java.net.UnknownHostException
-
 class BaseModel(
     private val cacheDataSource: CacheDataSource,
     private val cloudDataSource: CloudDataSource,
@@ -23,6 +19,7 @@ class BaseModel(
         if(getJokeFromCache){
             cacheDataSource.getJoke(object : JokeCacheCallback{
                 override fun provide(jokeServerModel: JokeServerModel) {
+                    cachedJokeServerModel = jokeServerModel
                     jokeCallback?.provide(jokeServerModel.toFavoriteJoke())
                 }
 
@@ -61,7 +58,7 @@ class BaseModel(
         }
     }
 
-    override fun chooseDataSource(cached: Boolean) {
-        getJokeFromCache = cached
+    override fun chooseDataSource(favorites: Boolean) {
+        getJokeFromCache = favorites
     }
 }

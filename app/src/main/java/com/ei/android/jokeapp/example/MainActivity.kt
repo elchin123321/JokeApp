@@ -19,13 +19,14 @@ class MainActivity : AppCompatActivity() {
         val textView = findViewById<TextView>(R.id.textView)
         progressBar.visibility = View.INVISIBLE
         val checkBox = findViewById<CheckBox>(R.id.checkBox)
+        checkBox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.chooseFavorites(isChecked)
+        }
         val changeButton = findViewById<ImageButton>(R.id.iconView)
         changeButton.setOnClickListener{
             viewModel.changeJokeStatus()
         }
-        checkBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.chooseFavorites(isChecked)
-        }
+
 
         button.setOnClickListener{
             button.isEnabled = false
