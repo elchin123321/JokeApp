@@ -5,7 +5,7 @@ import androidx.annotation.DrawableRes
 class ViewModel(private val model: Model) {
     private var dataCallback: DataCallback? = null
     private val jokeCallback = object : JokeCallback{
-        override fun provide(data: Joke) {
+        override fun provide(data: JokeUIModel) {
             dataCallback?.let{
                 data.map(it)
             }

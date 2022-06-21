@@ -1,7 +1,7 @@
 package com.ei.android.jokeapp.example
 
 interface JokeCacheCallback {
-    fun provide(jokeServerModel: JokeServerModel)
+    fun provide(joke: Joke)
 
     fun fail()
 }

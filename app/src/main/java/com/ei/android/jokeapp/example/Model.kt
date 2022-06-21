@@ -9,6 +9,6 @@ interface Model {
 }
 
 interface JokeCallback{
-    fun provide(data: Joke)
+    fun provide(data: JokeUIModel)
 }
 

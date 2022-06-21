@@ -10,12 +10,12 @@ data class JokeServerModel(
     @SerializedName("answer")
     private val answer: String
 ){
-    fun toJoke() = BaseJoke(question,answer)
+    fun toJoke() = Joke(question,id,answer)
 
-    fun change(cacheDataSource: CacheDataSource) = cacheDataSource.addOrRemove(id,this)
-    fun toFavoriteJoke() = FavoriteJoke(question,answer)
+    fun change(cacheDataSource: CacheDataSource) = cacheDataSource.addOrRemove(id,this.toJoke())
+    fun toFavoriteJoke() = FavoriteJokeUIModel(question,answer)
 
-    fun toBaseJoke() = BaseJoke(question,answer)
+    fun toBaseJoke() = BaseJokeUIModel(question,answer)
     fun toJokeRealm(): JokeRealm {
         return JokeRealm().also {
             it.id = id

@@ -1,7 +1,7 @@
 package com.ei.android.jokeapp.example
 
 interface JokeCloudCallback {
-    fun provide(joke:JokeServerModel)
+    fun provide(joke:Joke)
     fun fail(error: ErrorType)
 }
 enum class ErrorType{

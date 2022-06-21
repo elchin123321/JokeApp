@@ -13,7 +13,7 @@ class BaseCloudDataSource(private val service: JokeService): CloudDataSource {
                 response: Response<List<JokeServerModel>>
             ) {
                 if(response.isSuccessful){
-                    callback.provide(response.body()!![0])
+                    callback.provide(response.body()!![0].toJoke())
                 }else{
                     callback.fail(ErrorType.SERVICE_UNAVAILABLE)
 
@@ -21,13 +21,11 @@ class BaseCloudDataSource(private val service: JokeService): CloudDataSource {
             }
 
             override fun onFailure(call: Call<List<JokeServerModel>>, t: Throwable) {
-                if(t is UnknownHostException){
-                    callback.fail(ErrorType.NO_CONNECTION)
-                }else{
-                    callback.fail(ErrorType.SERVICE_UNAVAILABLE)
-                    Log.d("Error", "fail")
-                    System.out.println(t.message)
-                }
+                val errorType = if(t is UnknownHostException)
+                    ErrorType.NO_CONNECTION
+                else
+                    ErrorType.SERVICE_UNAVAILABLE
+                callback.fail(errorType)
 
             }
 

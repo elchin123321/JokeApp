@@ -1,6 +1,5 @@
 package com.ei.android.jokeapp.example
 
-import android.util.Log
 import io.realm.Realm
 
 class BaseCachedDataSource(private val realm: Realm): CacheDataSource {
@@ -12,7 +11,7 @@ class BaseCachedDataSource(private val realm: Realm): CacheDataSource {
             }else{
                 jokes.random().let{joke->
                     jokeCachedCallback.provide(
-                        JokeServerModel(
+                        Joke(
                             joke.question,
                             joke.id,
                             joke.answer)
@@ -22,20 +21,20 @@ class BaseCachedDataSource(private val realm: Realm): CacheDataSource {
         }
     }
 
-    override fun addOrRemove(id: Int, jokeServerModel: JokeServerModel): Joke {
+    override fun addOrRemove(id: Int, joke: Joke): JokeUIModel {
         realm.let{
             val jokeRealm = it.where(JokeRealm::class.java).equalTo("id",id).findFirst()
             return if(jokeRealm == null){
-                val newJoke = jokeServerModel.toJokeRealm()
+                val newJoke = joke.toJokeRealm()
                 it.executeTransactionAsync{transition->
                     transition.insert(newJoke)
                 }
-                jokeServerModel.toFavoriteJoke()
+                joke.toFavoriteJoke()
             }else{
                 it.executeTransactionAsync{
                     jokeRealm.deleteFromRealm()
                 }
-                jokeServerModel.toBaseJoke()
+                joke.toBaseJoke()
             }
         }
     }
