@@ -1,16 +1,19 @@
 package com.ei.android.jokeapp.example
 
 import io.realm.Realm
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.invoke
+import kotlinx.coroutines.withContext
 
-class BaseCachedDataSource(private val realm: Realm): CacheDataSource {
-    override fun getJoke(jokeCachedCallback: JokeCacheCallback) {
-        realm.let{
+class BaseCachedDataSource(private val realmProvider: RealmProvider): CacheDataSource {
+    override suspend fun getJoke(): Result<Joke, Unit> {
+        realmProvider.provide().use{
             val jokes = it.where(JokeRealm::class.java).findAll()
             if(jokes.isEmpty()){
-                jokeCachedCallback.fail()
+                return Result.Error(Unit)
             }else{
                 jokes.random().let{joke->
-                    jokeCachedCallback.provide(
+                    return Result.Success(
                         Joke(
                             joke.question,
                             joke.id,
@@ -21,21 +24,23 @@ class BaseCachedDataSource(private val realm: Realm): CacheDataSource {
         }
     }
 
-    override fun addOrRemove(id: Int, joke: Joke): JokeUIModel {
-        realm.let{
-            val jokeRealm = it.where(JokeRealm::class.java).equalTo("id",id).findFirst()
-            return if(jokeRealm == null){
-                val newJoke = joke.toJokeRealm()
-                it.executeTransactionAsync{transition->
-                    transition.insert(newJoke)
+    override suspend fun addOrRemove(id: Int, joke: Joke): JokeUIModel =
+        withContext(Dispatchers.IO){
+            Realm.getDefaultInstance().use{
+                val jokeRealm =
+                    it.where(JokeRealm::class.java).equalTo("id",id).findFirst()
+                return@withContext if(jokeRealm == null){
+                    it.executeTransaction { transition->
+                        val newJoke = joke.toJokeRealm()
+                        transition.insert(newJoke)
+                    }
+                    joke.toFavoriteJoke()
+                }else{
+                    it.executeTransaction{
+                        jokeRealm.deleteFromRealm()
+                    }
+                    joke.toBaseJoke()
                 }
-                joke.toFavoriteJoke()
-            }else{
-                it.executeTransactionAsync{
-                    jokeRealm.deleteFromRealm()
-                }
-                joke.toBaseJoke()
             }
         }
-    }
 }

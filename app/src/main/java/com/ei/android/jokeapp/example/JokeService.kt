@@ -7,7 +7,7 @@ import retrofit2.http.GET
 interface JokeService {
 
     @GET("https://jservice.io/api/random")
-    fun getJoke(): Call<List<JokeServerModel>>
+    suspend fun getJoke(): List<JokeServerModel>
 }
 
 

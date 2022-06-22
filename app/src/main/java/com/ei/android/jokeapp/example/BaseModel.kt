@@ -15,33 +15,34 @@ class BaseModel(
     private var cachedJoke: Joke? = null
     private var getJokeFromCache = false
 
-    override fun getJoke() {
+    override suspend fun getJoke():JokeUIModel {
         if(getJokeFromCache){
-            cacheDataSource.getJoke(object : JokeCacheCallback{
-                override fun provide(joke: Joke) {
-                    cachedJoke = joke
-                    jokeCallback?.provide(joke.toFavoriteJoke())
+            return when(val result = cacheDataSource.getJoke()){
+                is Result.Success<Joke>->result.data.let{
+                    cachedJoke = it
+                    it.toFavoriteJoke()
                 }
-
-                override fun fail() {
+                is Result.Error->{
                     cachedJoke = null
-                    jokeCallback?.provide(FailedJokeUIModel(noCachedJokes.getMessage()))
+                    FailedJokeUIModel(noCachedJokes.getMessage())
                 }
-
-            })
+            }
         }else{
-            cloudDataSource.getJoke(object :JokeCloudCallback{
-                override fun provide(joke: Joke) {
-                    cachedJoke = joke
-                    jokeCallback?.provide(joke.toBaseJoke())
+            return when(val result = cloudDataSource.getJoke()){
+                is Result.Success<JokeServerModel>->{
+                    result.data.toJoke().let{
+                        cachedJoke = it
+                        it.toBaseJoke()
+                    }
                 }
-
-                override fun fail(error: ErrorType) {
+                is Result.Error<ErrorType>->{
                     cachedJoke = null
-                    val failure = if(error == ErrorType.NO_CONNECTION)noConnection else serviceUnavailable
-                    jokeCallback?.provide(FailedJokeUIModel(failure.getMessage()))
+                    val failure = if(result.exception == ErrorType.NO_CONNECTION)
+                        noConnection
+                    else serviceUnavailable
+                    FailedJokeUIModel(failure.getMessage())
                 }
-            })
+            }
         }
     }
 
@@ -53,11 +54,8 @@ class BaseModel(
         jokeCallback = null
     }
 
-    override fun changeJokeStatus(jokeCallback: JokeCallback) {
-        cachedJoke?.let{
-            jokeCallback.provide(it.change(cacheDataSource))
-        }
-    }
+    override suspend fun changeJokeStatus():JokeUIModel? = cachedJoke?.change(cacheDataSource)
+
 
     override fun chooseDataSource(favorites: Boolean) {
         getJokeFromCache = favorites

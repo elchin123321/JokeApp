@@ -1,8 +1,8 @@
 package com.ei.android.jokeapp.example
 
-class TestCloudDataSource:CloudDataSource {
+class TestCloudDataSource {
     private var count = 0
-    override fun getJoke(callback: JokeCloudCallback) {
+     fun getJoke(callback: JokeCloudCallback) {
         val joke = JokeServerModel("question$count",count, "answer$count")
         callback.provide(joke.toJoke())
         count++

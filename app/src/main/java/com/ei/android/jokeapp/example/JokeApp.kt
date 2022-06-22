@@ -15,6 +15,9 @@ class JokeApp: Application() {
             .baseUrl("https://www.google.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        viewModel = ViewModel(BaseModel(BaseCachedDataSource(Realm.getDefaultInstance()),BaseCloudDataSource(retrofit.create(JokeService::class.java)),BaseResourceManager(this)))
+        viewModel = ViewModel(
+            BaseModel(BaseCachedDataSource(BaseRealmProvider()),
+                BaseCloudDataSource(retrofit.create(JokeService::class.java)),
+                BaseResourceManager(this)))
     }
 }

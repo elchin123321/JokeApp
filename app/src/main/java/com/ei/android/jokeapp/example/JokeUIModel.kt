@@ -36,7 +36,7 @@ data class Joke(
 ){
     fun toJoke() = BaseJokeUIModel(question,answer)
 
-    fun change(cacheDataSource: CacheDataSource) = cacheDataSource.addOrRemove(id,this)
+    suspend fun change(cacheDataSource: CacheDataSource) = cacheDataSource.addOrRemove(id,this)
     fun toFavoriteJoke() = FavoriteJokeUIModel(question,answer)
 
     fun toBaseJoke() = BaseJokeUIModel(question,answer)

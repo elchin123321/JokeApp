@@ -1,6 +1,6 @@
 package com.ei.android.jokeapp.example
 
 interface CacheDataSource {
-    fun getJoke(jokeCachedCallback: JokeCacheCallback)
-    fun addOrRemove(id: Int, joke: Joke):JokeUIModel
+    suspend fun getJoke():Result<Joke,Unit>
+    suspend fun addOrRemove(id: Int, joke: Joke):JokeUIModel
 }

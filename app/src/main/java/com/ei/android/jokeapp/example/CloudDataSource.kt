@@ -1,5 +1,5 @@
 package com.ei.android.jokeapp.example
 
 interface CloudDataSource {
-    fun getJoke(callback:JokeCloudCallback)
+    suspend fun getJoke(): Result<JokeServerModel, ErrorType>
 }

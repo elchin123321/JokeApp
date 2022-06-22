@@ -1,10 +1,10 @@
 package com.ei.android.jokeapp.example
 
 interface Model {
-    fun getJoke()
+    suspend fun getJoke():JokeUIModel
     fun init(callback: JokeCallback)
     fun clear()
-    fun changeJokeStatus(jokeCallback: JokeCallback)
+    suspend fun changeJokeStatus(): JokeUIModel?
     fun chooseDataSource(favorites: Boolean)
 }
 

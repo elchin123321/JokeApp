@@ -1,5 +1,5 @@
 package com.ei.android.jokeapp.example
-class TestModel(resourceManager: ResourceManager): Model {
+class TestModel(resourceManager: ResourceManager) {
     private var callback: JokeCallback? = null
 
     private var count = 0
@@ -7,7 +7,7 @@ class TestModel(resourceManager: ResourceManager): Model {
     private val noConnection = NoConnection(resourceManager)
     private val serviceUnavailable = ServiceUnavailable(resourceManager)
 
-    override fun getJoke() {
+     fun getJoke() {
         Thread {
             Thread.sleep(1000)
             when(count){
@@ -19,18 +19,18 @@ class TestModel(resourceManager: ResourceManager): Model {
         }.start()
     }
 
-    override fun init(callback: JokeCallback) {
+    fun init(callback: JokeCallback) {
         this.callback = callback
     }
 
-    override fun clear() {
+    fun clear() {
         callback = null
     }
 
-    override fun changeJokeStatus(jokeCallback: JokeCallback) {
+    fun changeJokeStatus(jokeCallback: JokeCallback) {
 
     }
 
-    override fun chooseDataSource(favorites: Boolean) {
+    fun chooseDataSource(favorites: Boolean) {
     }
 }
