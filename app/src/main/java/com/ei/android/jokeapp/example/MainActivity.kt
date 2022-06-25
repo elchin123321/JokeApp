@@ -28,10 +28,13 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+
+
         button.setOnClickListener{
             button.isEnabled = false
             progressBar.visibility = View.VISIBLE
             viewModel.getJoke()
+
         }
 
         viewModel.init(object: DataCallback {
@@ -45,6 +48,9 @@ class MainActivity : AppCompatActivity() {
                 changeButton.setImageResource(id)
             }
         })
+
+
+
     }
 
     override fun onDestroy() {

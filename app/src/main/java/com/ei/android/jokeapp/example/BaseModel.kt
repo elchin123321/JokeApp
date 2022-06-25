@@ -10,7 +10,7 @@ class BaseModel(
     private val serviceUnavailable by lazy { ServiceUnavailable(resourceManager) }
     private val noCachedJokes by lazy{NoCachedJokes(resourceManager)}
 
-    private var jokeCallback:JokeCallback? = null
+
 
     private var cachedJoke: Joke? = null
     private var getJokeFromCache = false
@@ -46,13 +46,9 @@ class BaseModel(
         }
     }
 
-    override fun init(callback: JokeCallback) {
-        this.jokeCallback = callback
-    }
 
-    override fun clear() {
-        jokeCallback = null
-    }
+
+
 
     override suspend fun changeJokeStatus():JokeUIModel? = cachedJoke?.change(cacheDataSource)
 
