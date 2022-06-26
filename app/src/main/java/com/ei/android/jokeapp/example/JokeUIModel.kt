@@ -33,10 +33,10 @@ data class Joke(
     private val id: Int,
     @SerializedName("answer")
     private val answer: String
-){
+):ChangeJoke{
     fun toJoke() = BaseJokeUIModel(question,answer)
 
-    suspend fun change(cacheDataSource: CacheDataSource) = cacheDataSource.addOrRemove(id,this)
+    override suspend fun change(changeJokeStatus: ChangeJokeStatus) = changeJokeStatus.addOrRemove(id,this)
     fun toFavoriteJoke() = FavoriteJokeUIModel(question,answer)
 
     fun toBaseJoke() = BaseJokeUIModel(question,answer)

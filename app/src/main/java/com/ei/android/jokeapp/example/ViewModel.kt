@@ -32,6 +32,7 @@ class ViewModel(private val model: Model):ViewModel() {
             uiModel?.map(it)
         }
     }
+
 }
 
 interface DataCallback{

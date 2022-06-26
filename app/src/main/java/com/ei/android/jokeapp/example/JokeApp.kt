@@ -11,13 +11,29 @@ class JokeApp: Application() {
     override fun onCreate() {
         super.onCreate()
         Realm.init(this)
+        val cachedJoke = BaseCachedJoke()
+        val cacheDataSource= BaseCachedDataSource(BaseRealmProvider())
+        val resourceManager = BaseResourceManager(this)
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.google.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         viewModel = ViewModel(
-            BaseModel(BaseCachedDataSource(BaseRealmProvider()),
-                BaseCloudDataSource(retrofit.create(JokeService::class.java)),
-                BaseResourceManager(this)))
+            BaseModel(
+                cacheDataSource,
+                CacheResultHandler(
+                    cachedJoke,
+                    cacheDataSource,
+                    NoCachedJokes(resourceManager)
+                ),
+                CloudResultHandler(
+                    cachedJoke,
+                    BaseCloudDataSource(retrofit.create(JokeService::class.java)),
+                    NoConnection(resourceManager),
+                    ServiceUnavailable(resourceManager)
+                ),
+                cachedJoke
+            )
+        )
     }
 }
