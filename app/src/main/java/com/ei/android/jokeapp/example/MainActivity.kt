@@ -4,49 +4,45 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.annotation.DrawableRes
 import com.ei.android.jokeapp.R
+import com.ei.android.jokeapp.example.views.CorrectButton
+import com.ei.android.jokeapp.example.views.CorrectImageButton
+import com.ei.android.jokeapp.example.views.CorrectProgress
+import com.ei.android.jokeapp.example.views.CorrectTextView
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var viewModel: ViewModel
+    lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel = (application as JokeApp).viewModel
-        val button = findViewById<Button>(R.id.actionButton)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        val textView = findViewById<TextView>(R.id.textView)
+        mainViewModel = (application as JokeApp).mainViewModel
+        val button = findViewById<CorrectButton>(R.id.actionButton)
+        val progressBar = findViewById<CorrectProgress>(R.id.progressBar)
+        val textView = findViewById<CorrectTextView>(R.id.textView)
         progressBar.visibility = View.INVISIBLE
         val checkBox = findViewById<CheckBox>(R.id.checkBox)
         checkBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.chooseFavorites(isChecked)
+            mainViewModel.chooseFavorites(isChecked)
         }
-        val changeButton = findViewById<ImageButton>(R.id.iconView)
+        val changeButton = findViewById<CorrectImageButton>(R.id.iconView)
         changeButton.setOnClickListener{
-            viewModel.changeJokeStatus()
+            mainViewModel.changeJokeStatus()
         }
 
 
 
 
         button.setOnClickListener{
-            button.isEnabled = false
-            progressBar.visibility = View.VISIBLE
-            viewModel.getJoke()
+
+            mainViewModel.getJoke()
 
         }
 
-        viewModel.init(object: DataCallback {
-            override fun provideText(text: String){
-                button.isEnabled = true
-                progressBar.visibility = View.INVISIBLE
-                textView.text = text
-            }
-
-            override fun provideIconRes(id: Int)  {
-                changeButton.setImageResource(id)
-            }
+        mainViewModel.observe(this,{state->
+            state.show(progressBar,button,textView, changeButton)
         })
 
 
@@ -54,7 +50,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        viewModel.clear()
+
         super.onDestroy()
     }
+}
+interface Show<T>{
+    fun show(arg:T)
+}
+interface ShowText:Show<String>
+interface ShowImage:Show<Int>
+interface ShowView:Show<Boolean>
+interface EnableView{
+    fun enable(enable:Boolean)
 }

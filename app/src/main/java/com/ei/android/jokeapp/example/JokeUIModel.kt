@@ -5,15 +5,14 @@ import com.ei.android.jokeapp.R
 import com.google.gson.annotations.SerializedName
 
 abstract class JokeUIModel(private val text: String, private val punchline: String) {
-    protected fun getJokeUi() = "$text\n$punchline"
+    protected open fun text() = "$text\n$punchline"
 
     @DrawableRes
     protected abstract fun getIconResId(): Int
+    fun getData() = Pair(text(),getIconResId())
+    fun show(communication: Communication) = communication.showState(MainViewModel.State.Initial(text(),getIconResId()))
 
-    fun map(callback: DataCallback) = callback.run {
-        provideText(getJokeUi())
-        provideIconRes(getIconResId())
-    }
+
 }
 
 class BaseJokeUIModel(text: String, punchline: String): JokeUIModel(text, punchline) {
@@ -22,7 +21,10 @@ class BaseJokeUIModel(text: String, punchline: String): JokeUIModel(text, punchl
 class FavoriteJokeUIModel(text: String, punchline: String): JokeUIModel(text, punchline) {
     override fun getIconResId() = R.drawable.heart_filled
 }
-class FailedJokeUIModel(text: String): JokeUIModel(text, "") {
+class FailedJokeUIModel(private val text: String): JokeUIModel(text, "") {
+    override fun text() = text
+
+
     override fun getIconResId() = 0
 }
 

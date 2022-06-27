@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class JokeApp: Application() {
-    lateinit var viewModel: ViewModel
+    lateinit var mainViewModel: MainViewModel
 
     override fun onCreate() {
         super.onCreate()
@@ -18,7 +18,7 @@ class JokeApp: Application() {
             .baseUrl("https://www.google.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        viewModel = ViewModel(
+        mainViewModel = MainViewModel(
             BaseModel(
                 cacheDataSource,
                 CacheResultHandler(
@@ -33,7 +33,8 @@ class JokeApp: Application() {
                     ServiceUnavailable(resourceManager)
                 ),
                 cachedJoke
-            )
+            ),
+            BaseCommunication()
         )
     }
 }
