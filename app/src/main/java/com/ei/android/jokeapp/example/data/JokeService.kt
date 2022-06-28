@@ -1,4 +1,4 @@
-package com.ei.android.jokeapp.example
+package com.ei.android.jokeapp.example.data
 
 import retrofit2.Call
 import retrofit2.http.GET

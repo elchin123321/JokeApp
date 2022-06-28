@@ -1,4 +1,8 @@
 package com.ei.android.jokeapp.example
+
+import com.ei.android.jokeapp.example.data.NoConnection
+import com.ei.android.jokeapp.example.data.ServiceUnavailable
+
 class TestModel(resourceManager: ResourceManager) {
 
     private var count = 0

@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import androidx.annotation.DrawableRes
 import com.ei.android.jokeapp.R
 import com.ei.android.jokeapp.example.views.CorrectButton
 import com.ei.android.jokeapp.example.views.CorrectImageButton
@@ -13,37 +12,32 @@ import com.ei.android.jokeapp.example.views.CorrectTextView
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mainViewModel: MainViewModel
+    lateinit var baseViewModel: BaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mainViewModel = (application as JokeApp).mainViewModel
+        baseViewModel = (application as JokeApp).baseViewModel
         val button = findViewById<CorrectButton>(R.id.actionButton)
         val progressBar = findViewById<CorrectProgress>(R.id.progressBar)
         val textView = findViewById<CorrectTextView>(R.id.textView)
         progressBar.visibility = View.INVISIBLE
         val checkBox = findViewById<CheckBox>(R.id.checkBox)
         checkBox.setOnCheckedChangeListener { _, isChecked ->
-            mainViewModel.chooseFavorites(isChecked)
+            baseViewModel.chooseFavorites(isChecked)
         }
         val changeButton = findViewById<CorrectImageButton>(R.id.iconView)
         changeButton.setOnClickListener{
-            mainViewModel.changeJokeStatus()
+            baseViewModel.changeJokeStatus()
         }
-
-
-
-
         button.setOnClickListener{
-
-            mainViewModel.getJoke()
-
+            baseViewModel.getJoke()
         }
-
-        mainViewModel.observe(this,{state->
-            state.show(progressBar,button,textView, changeButton)
+        baseViewModel.observe(this,{state->
+            state.show(progressBar,button,textView,changeButton)
         })
+
+
 
 
 

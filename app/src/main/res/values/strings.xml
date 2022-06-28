@@ -8,4 +8,5 @@
     <string name="invalid_name">invalid name</string>
     <string name="show_favorite_joke">Show favorite joke</string>
     <string name="no_cached_jokes">No favorite jokes! Add on by heart icon</string>
+    <string name="generic_fail_message">generic_fail_message</string>
 </resources>

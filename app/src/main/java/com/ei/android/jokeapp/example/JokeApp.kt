@@ -1,40 +1,27 @@
 package com.ei.android.jokeapp.example
 
 import android.app.Application
+import com.ei.android.jokeapp.example.data.*
 import io.realm.Realm
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class JokeApp: Application() {
-    lateinit var mainViewModel: MainViewModel
+    lateinit var baseViewModel: BaseViewModel
 
     override fun onCreate() {
         super.onCreate()
         Realm.init(this)
-        val cachedJoke = BaseCachedJoke()
-        val cacheDataSource= BaseCachedDataSource(BaseRealmProvider())
-        val resourceManager = BaseResourceManager(this)
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.google.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        mainViewModel = MainViewModel(
-            BaseModel(
-                cacheDataSource,
-                CacheResultHandler(
-                    cachedJoke,
-                    cacheDataSource,
-                    NoCachedJokes(resourceManager)
-                ),
-                CloudResultHandler(
-                    cachedJoke,
-                    BaseCloudDataSource(retrofit.create(JokeService::class.java)),
-                    NoConnection(resourceManager),
-                    ServiceUnavailable(resourceManager)
-                ),
-                cachedJoke
-            ),
-            BaseCommunication()
-        )
+        val cacheDataSource= BaseCachedDataSource(BaseRealmProvider(),JokeRealmMapper())
+        val resourceManager = BaseResourceManager(this)
+        val cloudDataSource = BaseCloudDataSource(retrofit.create(JokeService::class.java))
+        val repository = BaseJokeRepository(cacheDataSource,cloudDataSource,BaseCachedJoke())
+        val interractor = BaseJokeInteractor(repository,JokeFailureFactory(resourceManager),JokeSuccessMapper())
+        baseViewModel = BaseViewModel(interractor,BaseCommunication())
     }
 }
