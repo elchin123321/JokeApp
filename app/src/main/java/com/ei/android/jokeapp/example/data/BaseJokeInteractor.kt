@@ -1,5 +1,6 @@
 package com.ei.android.jokeapp.example.data
 
+import android.util.Log
 import com.ei.android.jokeapp.R
 import com.ei.android.jokeapp.example.Joke
 import com.ei.android.jokeapp.example.ResourceManager
@@ -18,6 +19,7 @@ class BaseJokeInteractor(
             jokeRepository.getJoke().map(mapper)
         }catch (e: Exception){
             Joke.Failed(jokeFailureHandler.handle(e))
+
         }
     }
 
