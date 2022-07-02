@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:padding="@dimen/small_margin"
+        tools:text="@string/show_favorite_joke"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <com.ei.android.jokeapp.example.views.CorrectTextView
+            android:id="@+id/textView"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            tools:text="Joke or error message"
+            android:layout_gravity="center"
+            />
+        <com.ei.android.jokeapp.example.views.CorrectImageButton
+            android:background="?selectableItemBackground"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/iconView"
+            android:src="@android:drawable/ic_input_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <com.ei.android.jokeapp.example.views.CorrectProgress
+        android:indeterminate="true"
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:padding="@dimen/small_margin"
+        />
+    <com.ei.android.jokeapp.example.views.CorrectButton
+        android:id="@+id/actionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/get_joke"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        />
+
+</merge>

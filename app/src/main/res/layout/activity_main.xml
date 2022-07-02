@@ -1,52 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom = "http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     tools:context=".example.MainActivity">
-    <CheckBox
-        android:id="@+id/checkBox"
-        android:padding="@dimen/small_margin"
-        android:text="@string/show_favorite_joke"
+    <com.ei.android.jokeapp.example.views.FavoriteDataView
+        android:id="@+id/favoriteDataView"
         android:layout_width="match_parent"
+        custom:actionButtonText="@string/get_joke"
+        custom:checkBoxText="@string/show_favorite_joke"
         android:layout_height="wrap_content"/>
-    <LinearLayout
+    <com.ei.android.jokeapp.example.views.FavoriteDataView
+        android:id="@+id/quoteFavoriteView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <com.ei.android.jokeapp.example.views.CorrectTextView
-            android:id="@+id/textView"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:text="Joke or error message"
-            android:layout_gravity="center"
-            />
-        <com.ei.android.jokeapp.example.views.CorrectImageButton
-            android:background="?selectableItemBackground"
-            android:layout_gravity="center_vertical"
-            android:id="@+id/iconView"
-            android:src="@android:drawable/ic_input_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <com.ei.android.jokeapp.example.views.CorrectProgress
-        android:indeterminate="true"
-        android:id="@+id/progressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:padding="@dimen/small_margin"
+        custom:actionButtonText="@string/get_quote"
+        custom:checkBoxText="@string/show_favorite_quote"
         />
-    <com.ei.android.jokeapp.example.views.CorrectButton
-        android:id="@+id/actionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/get_joke"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        />
+
 
 </LinearLayout>

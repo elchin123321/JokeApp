@@ -9,4 +9,6 @@
     <string name="show_favorite_joke">Show favorite joke</string>
     <string name="no_cached_jokes">No favorite jokes! Add on by heart icon</string>
     <string name="generic_fail_message">generic_fail_message</string>
+    <string name="show_favorite_quote">Favorite quote</string>
+    <string name="get_quote">GET QUOTE</string>
 </resources>

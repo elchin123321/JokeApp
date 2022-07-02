@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import com.ei.android.jokeapp.R
-import com.ei.android.jokeapp.example.views.CorrectButton
-import com.ei.android.jokeapp.example.views.CorrectImageButton
-import com.ei.android.jokeapp.example.views.CorrectProgress
-import com.ei.android.jokeapp.example.views.CorrectTextView
+import com.ei.android.jokeapp.example.views.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,23 +15,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         baseViewModel = (application as JokeApp).baseViewModel
-        val button = findViewById<CorrectButton>(R.id.actionButton)
-        val progressBar = findViewById<CorrectProgress>(R.id.progressBar)
-        val textView = findViewById<CorrectTextView>(R.id.textView)
-        progressBar.visibility = View.INVISIBLE
-        val checkBox = findViewById<CheckBox>(R.id.checkBox)
-        checkBox.setOnCheckedChangeListener { _, isChecked ->
+
+        val favoriteDataView = findViewById<FavoriteDataView>(R.id.favoriteDataView)
+
+        favoriteDataView.listenChanges { isChecked ->
             baseViewModel.chooseFavorites(isChecked)
         }
-        val changeButton = findViewById<CorrectImageButton>(R.id.iconView)
-        changeButton.setOnClickListener{
+        favoriteDataView.handleChangeButton {
             baseViewModel.changeJokeStatus()
         }
-        button.setOnClickListener{
+        favoriteDataView.handleActionButton {
             baseViewModel.getJoke()
         }
+
         baseViewModel.observe(this,{state->
-            state.show(progressBar,button,textView,changeButton)
+            favoriteDataView.show(state)
         })
 
 
