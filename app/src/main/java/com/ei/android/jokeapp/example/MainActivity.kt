@@ -2,7 +2,6 @@ package com.ei.android.jokeapp.example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.*
 import com.ei.android.jokeapp.R
 import com.ei.android.jokeapp.example.views.*
@@ -17,24 +16,16 @@ class MainActivity : AppCompatActivity() {
         baseViewModel = (application as JokeApp).baseViewModel
 
         val favoriteDataView = findViewById<FavoriteDataView>(R.id.favoriteDataView)
-
-        favoriteDataView.listenChanges { isChecked ->
-            baseViewModel.chooseFavorites(isChecked)
-        }
-        favoriteDataView.handleChangeButton {
-            baseViewModel.changeJokeStatus()
-        }
-        favoriteDataView.handleActionButton {
-            baseViewModel.getJoke()
-        }
-
+        favoriteDataView.linkWith(baseViewModel)
         baseViewModel.observe(this,{state->
             favoriteDataView.show(state)
         })
 
-
-
-
+        val quoteViewModel = (application as JokeApp).quoteViewModel
+        val quoteFavoriteDataView = findViewById<FavoriteDataView>(R.id.quoteFavoriteView)
+        quoteFavoriteDataView.linkWith(quoteViewModel)
+        quoteViewModel.observe(this,{state->
+            quoteFavoriteDataView.show(state)})
 
     }
 
