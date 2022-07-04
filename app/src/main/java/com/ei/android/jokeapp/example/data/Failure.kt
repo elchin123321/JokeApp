@@ -8,45 +8,45 @@ import com.ei.android.jokeapp.example.domain.NoConnectionException
 import com.ei.android.jokeapp.example.domain.ServiceUnavailableException
 import java.lang.Exception
 
-interface JokeFailure{
+interface Failure{
     fun getMessage(): String
 }
 
-class NoCachedJokes(private val resourceManager: ResourceManager): BaseJokeFailure(resourceManager) {
+class NoCachedJokes(private val resourceManager: ResourceManager): BaseFailure(resourceManager) {
     override fun getMessageResId()= R.string.no_cached_jokes
 
     override fun getMessage() = resourceManager.getString(R.string.no_cached_jokes)
 }
-abstract class BaseJokeFailure(private val resourceManager: ResourceManager):JokeFailure{
+abstract class BaseFailure(private val resourceManager: ResourceManager):Failure{
     @StringRes
     protected abstract fun getMessageResId():Int
     override fun getMessage() = resourceManager.getString(getMessageResId())
 }
 
 
-class NoConnection(private val resourceManager: ResourceManager): BaseJokeFailure(resourceManager) {
+class NoConnection(private val resourceManager: ResourceManager): BaseFailure(resourceManager) {
     override fun getMessageResId()= R.string.no_connection
 
     override fun getMessage(): String = resourceManager.getString(R.string.no_connection)
 }
 
-class ServiceUnavailable(private val resourceManager: ResourceManager): BaseJokeFailure(resourceManager) {
+class ServiceUnavailable(private val resourceManager: ResourceManager): BaseFailure(resourceManager) {
     override fun getMessageResId() = R.string.service_unaviable
 
     override fun getMessage(): String = resourceManager.getString(R.string.service_unaviable)
 }
 
-class GenericError(private val resourceManager: ResourceManager):BaseJokeFailure(resourceManager) {
+class GenericError(private val resourceManager: ResourceManager):BaseFailure(resourceManager) {
     override fun getMessageResId()= R.string.generic_fail_message
 
     override fun getMessage() = resourceManager.getString(R.string.generic_fail_message)
 }
 
-interface JokeFailureHandler{
-    fun handle(e:Exception):JokeFailure
+interface FailureHandler{
+    fun handle(e:Exception):Failure
 }
 
-class JokeFailureFactory(private val  resourceManager: ResourceManager):JokeFailureHandler{
+class FailureFactory(private val  resourceManager: ResourceManager):FailureHandler{
     override fun handle(e: Exception)=when(e){
             is NoConnectionException -> NoConnection(resourceManager)
             is NoCachedJokesException -> NoCachedJokes(resourceManager)

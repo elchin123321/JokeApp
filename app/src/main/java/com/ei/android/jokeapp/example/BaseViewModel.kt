@@ -2,34 +2,37 @@ package com.ei.android.jokeapp.example
 
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.*
-import com.ei.android.jokeapp.example.data.JokeInteractor
-import com.ei.android.jokeapp.example.data.JokeRepository
+import com.ei.android.jokeapp.example.data.CommonInteractor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class BaseViewModel(
-    private val interactor: JokeInteractor,
+    private val interactor: CommonInteractor,
     private val communication: Communication,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-):ViewModel() {
+):ViewModel(), CommonViewModel {
 
 
-    fun getJoke() = viewModelScope.launch(dispatcher) {
-        communication.showState(State.Progress)
-        interactor.getJoke().to().show(communication)
-    }
+     override fun getItem() {
+         viewModelScope.launch(dispatcher) {
+            communication.showState(State.Progress)
+            interactor.getItem().to().show(communication)
+        }
+     }
 
 
-    fun chooseFavorites(favorites: Boolean) = interactor.getFavoritesJokes(favorites)
+    override fun chooseFavorites(favorites: Boolean) = interactor.getFavoritesJokes(favorites)
 
 
-    fun changeJokeStatus() = viewModelScope.launch(dispatcher) {
+    override fun changeItemStatus() {
+        viewModelScope.launch(dispatcher) {
         if (communication.isState(State.INITIAL))
             interactor.changeFavorites().to().show(communication)
     }
+    }
 
-    fun observe(owner: LifecycleOwner, observer: Observer<State>) = communication.observe(owner, observer)
+    override fun observe(owner: LifecycleOwner, observer: Observer<State>) = communication.observe(owner, observer)
 
 
     sealed class State {

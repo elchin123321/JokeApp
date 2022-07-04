@@ -7,11 +7,11 @@ import retrofit2.Call
 import java.lang.Exception
 import java.net.UnknownHostException
 
-abstract class BaseCloudDataSource<T: Mapper<JokeDataModel>>: CloudDataSource {
-    protected abstract fun getJokeServerModel(): Call<T>
-    override suspend fun getJoke(): JokeDataModel {
+abstract class BaseCloudDataSource<T: Mapper<CommonDataModel>>: CloudDataSource {
+    protected abstract fun getServerModel(): Call<T>
+    override suspend fun getData(): CommonDataModel {
          try{
-            return getJokeServerModel().execute().body()!!.to()
+            return getServerModel().execute().body()!!.to()
 
         }catch (e: Exception){
             if(e is UnknownHostException){

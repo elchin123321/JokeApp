@@ -1,45 +1,60 @@
 package com.ei.android.jokeapp.example.data
 
-import com.ei.android.jokeapp.example.Joke
-import com.ei.android.jokeapp.example.JokeUIModel
 import com.ei.android.jokeapp.example.RealmProvider
+import com.ei.android.jokeapp.example.core.Mapper
 import com.ei.android.jokeapp.example.domain.NoCachedJokesException
-import io.realm.Realm
+import io.realm.RealmObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-class BaseCachedDataSource(
+class JokeCachedDataSource(
+    realmProvider: RealmProvider,
+    mapper:JokeRealmMapper,
+    commonDataMapper:JokeRealmToCommonMapper):
+    BaseCachedDataSource<JokeRealmModel>(realmProvider,mapper,commonDataMapper){
+        override val dbClass = JokeRealmModel::class.java
+    }
+class QuoteCachedDataSource(
+    realmProvider: RealmProvider,
+    mapper:QuoteRealmMapper,
+    commonDataMapper:QuoteRealmToCommonMapper):
+    BaseCachedDataSource<QuoteRealmModel>(realmProvider,mapper,commonDataMapper){
+    override val dbClass = QuoteRealmModel::class.java
+}
+abstract class BaseCachedDataSource<T: RealmObject>(
     private val realmProvider: RealmProvider,
-    private val mapper: JokeDataModelMapper<JokeRealm>
+    private val mapper: CommonDataModelMapper<T>,
+    private val realmToCommonDataMapper: RealmToCommonDataMapper<T>
     ): CacheDataSource {
-    override suspend fun getJoke(): JokeDataModel {
+
+    protected abstract val dbClass:Class<T>
+    override suspend fun getData(): CommonDataModel {
         realmProvider.provide().use{
-            val jokes = it.where(JokeRealm::class.java).findAll()
-            if(jokes.isEmpty()){
+            val list = it.where(dbClass).findAll()
+            if(list.isEmpty()){
                 throw NoCachedJokesException()
             }else{
-                return jokes.random().to()
+                return realmToCommonDataMapper.map(list.random())
             }
         }
     }
 
 
-    override suspend fun addOrRemove(id: Int, joke: JokeDataModel): JokeDataModel =
+    override suspend fun addOrRemove(id: Int, model: CommonDataModel): CommonDataModel =
         withContext(Dispatchers.IO){
             realmProvider.provide().use{
-                val jokeRealm =
-                    it.where(JokeRealm::class.java).equalTo("id",id).findFirst()
-                return@withContext if(jokeRealm == null){
+                val itemRealm =
+                    it.where(dbClass).equalTo("id",id).findFirst()
+                return@withContext if(itemRealm == null){
                     it.executeTransaction { transition->
-                        val newJoke = joke.map(mapper)
-                        transition.insert(newJoke)
+                        val newData = model.map(mapper)
+                        transition.insert(newData)
                     }
-                    joke.changeCached(true)
+                    model.changeCached(true)
                 }else{
                     it.executeTransaction{
-                        jokeRealm.deleteFromRealm()
+                        itemRealm.deleteFromRealm()
                     }
-                    joke.changeCached(false)
+                    model.changeCached(false)
                 }
             }
         }
