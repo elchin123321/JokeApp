@@ -1,9 +1,9 @@
 package com.ei.android.jokeapp.example.data
 
 
-interface CommonRepository {
-    suspend fun getCommonItem(): CommonDataModel
-    suspend fun changeStatus(): CommonDataModel
+interface CommonRepository<E> {
+    suspend fun getCommonItem(): CommonDataModel<E>
+    suspend fun changeStatus(): CommonDataModel<E>
     fun chooseDataSource(favorites: Boolean)
 }
 

@@ -7,9 +7,9 @@ import retrofit2.Call
 import java.lang.Exception
 import java.net.UnknownHostException
 
-abstract class BaseCloudDataSource<T: Mapper<CommonDataModel>>: CloudDataSource {
+abstract class BaseCloudDataSource<T: Mapper<CommonDataModel<E>>,E>: CloudDataSource<E> {
     protected abstract fun getServerModel(): Call<T>
-    override suspend fun getData(): CommonDataModel {
+    override suspend fun getData(): CommonDataModel<E> {
          try{
             return getServerModel().execute().body()!!.to()
 

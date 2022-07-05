@@ -1,3 +1,3 @@
 package com.ei.android.jokeapp.example.data
 
-interface CacheDataSource : DataFetcher, ChangeStatus
+interface CacheDataSource<E> : DataFetcher<E>, ChangeStatus<E>

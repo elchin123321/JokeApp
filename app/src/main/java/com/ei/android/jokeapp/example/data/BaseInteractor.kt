@@ -3,10 +3,10 @@ package com.ei.android.jokeapp.example.data
 import com.ei.android.jokeapp.example.CommonItem
 import java.lang.Exception
 
-class BaseInteractor(
-    private val commonRepository: CommonRepository,
+class BaseInteractor<E>(
+    private val commonRepository: CommonRepository<E>,
     private val failureHandler: FailureHandler,
-    private val mapper: CommonDataModelMapper<CommonItem.Success>
+    private val mapper: CommonDataModelMapper<CommonItem.Success, E>
 ): CommonInteractor {
     override suspend fun getItem(): CommonItem {
         return try {

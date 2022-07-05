@@ -2,17 +2,17 @@ package com.ei.android.jokeapp.example.data
 
 import com.ei.android.jokeapp.example.CommonItem
 
-interface CommonDataModelMapper<T> {
-    fun map(id:Int, first:String, second:String, cached:Boolean):T
+interface CommonDataModelMapper<T,E> {
+    fun map(id:E, first:String, second:String, cached:Boolean):T
 }
 
-class CommonSuccessMapper:CommonDataModelMapper<CommonItem.Success> {
-    override fun map(id: Int, first: String, second: String, cached: Boolean)=
+class CommonSuccessMapper<E>:CommonDataModelMapper<CommonItem.Success, E> {
+    override fun map(id: E, first: String, second: String, cached: Boolean)=
         CommonItem.Success(first,second,cached)
 
 }
 
-class JokeRealmMapper:CommonDataModelMapper<JokeRealmModel>{
+class JokeRealmMapper:CommonDataModelMapper<JokeRealmModel, Int>{
     override fun map(id: Int, first: String, second: String, cached: Boolean)=
         JokeRealmModel().also { joke->
             joke.id = id
@@ -20,8 +20,8 @@ class JokeRealmMapper:CommonDataModelMapper<JokeRealmModel>{
             joke.answer = second
         }
 }
-class QuoteRealmMapper:CommonDataModelMapper<QuoteRealmModel>{
-    override fun map(id: Int, first: String, second: String, cached: Boolean)=
+class QuoteRealmMapper:CommonDataModelMapper<QuoteRealmModel, String>{
+    override fun map(id: String, first: String, second: String, cached: Boolean)=
         QuoteRealmModel().also { joke->
             joke.id = id
             joke.content = first

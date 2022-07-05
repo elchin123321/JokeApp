@@ -10,7 +10,7 @@ data class JokeServerModel(
     private val id: Int,
     @SerializedName("answer")
     private val answer: String
-):Mapper<CommonDataModel>{
+):Mapper<CommonDataModel<Int>>{
 
     override fun to() = CommonDataModel(id, question , answer)
 }

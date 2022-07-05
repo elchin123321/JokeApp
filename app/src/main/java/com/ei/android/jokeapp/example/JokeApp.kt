@@ -31,19 +31,20 @@ class JokeApp: Application() {
         )
         val resourceManager = BaseResourceManager(this)
         val failureHandler = FailureFactory(resourceManager)
-        val mapper = CommonSuccessMapper()
+        val jokeMapper = CommonSuccessMapper<Int>()
         val cloudDataSource = JokeCloudDataSources(retrofit.create(NewJokeService::class.java))
-        val jokeRepository = BaseRepository(cacheDataSource,cloudDataSource,BaseCachedData())
-        val interractor = BaseInteractor(jokeRepository,failureHandler,mapper)
+        val jokeRepository = BaseRepository(cacheDataSource,cloudDataSource,BaseCachedData<Int>())
+        val interractor = BaseInteractor(jokeRepository,failureHandler,jokeMapper)
         baseViewModel = BaseViewModel(interractor,BaseCommunication())
 
         val quoteRepository = BaseRepository(
             QuoteCachedDataSource(realmProvider, QuoteRealmMapper(),QuoteRealmToCommonMapper()),
             QuoteCloudDataSource(retrofit.create(QuoteService::class.java)),
-            BaseCachedData()
+            BaseCachedData<String>()
         )
+        val quoteMapper = CommonSuccessMapper<String>()
         quoteViewModel = BaseViewModel(
-            BaseInteractor(quoteRepository, failureHandler,mapper),
+            BaseInteractor(quoteRepository, failureHandler,quoteMapper),
             BaseCommunication()
         )
     }
