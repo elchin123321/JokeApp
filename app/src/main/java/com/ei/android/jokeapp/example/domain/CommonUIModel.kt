@@ -10,8 +10,9 @@ abstract class CommonUIModel(private val first: String, private val second: Stri
 
     @DrawableRes
     protected abstract fun getIconResId(): Int
-    open fun show(communication: Communication) = communication.showState(BaseViewModel.State.Initial(text(),getIconResId()))
-
+    open fun show(communication: Communication) =
+        communication.showState(BaseViewModel.State.Initial(text(),getIconResId()))
+    fun show(showText: ShowText) = showText.show(text())
 
 }
 

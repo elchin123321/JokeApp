@@ -3,7 +3,7 @@ package com.ei.android.jokeapp.example.data
 import androidx.annotation.StringRes
 import com.ei.android.jokeapp.R
 import com.ei.android.jokeapp.example.ResourceManager
-import com.ei.android.jokeapp.example.domain.NoCachedJokesException
+import com.ei.android.jokeapp.example.domain.NoCachedDataException
 import com.ei.android.jokeapp.example.domain.NoConnectionException
 import com.ei.android.jokeapp.example.domain.ServiceUnavailableException
 import java.lang.Exception
@@ -49,7 +49,7 @@ interface FailureHandler{
 class FailureFactory(private val  resourceManager: ResourceManager):FailureHandler{
     override fun handle(e: Exception)=when(e){
             is NoConnectionException -> NoConnection(resourceManager)
-            is NoCachedJokesException -> NoCachedJokes(resourceManager)
+            is NoCachedDataException -> NoCachedJokes(resourceManager)
             is ServiceUnavailableException -> ServiceUnavailable(resourceManager)
             else->GenericError(resourceManager)
 

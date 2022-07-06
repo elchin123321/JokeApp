@@ -31,6 +31,9 @@ class BaseRepository<E>(
         currentDataSource = if(favorites) cacheDataSource else cloudDataSource
     }
 
+    override suspend fun getCommonItemList() = withContext(Dispatchers.IO){
+        cacheDataSource.getDataList()
+    }
 
 
 }

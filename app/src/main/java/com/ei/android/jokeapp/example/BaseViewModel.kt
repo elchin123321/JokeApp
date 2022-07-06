@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class BaseViewModel(
     private val interactor: CommonInteractor,
-    private val communication: Communication,
+    private val communication: CommonCommunication,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ):ViewModel(), CommonViewModel {
 
@@ -20,6 +20,15 @@ class BaseViewModel(
             interactor.getItem().to().show(communication)
         }
      }
+
+    override fun getItemList() {
+        viewModelScope.launch (dispatcher){
+           communication.showDataList(interactor.getItemList().toUiList())
+        }
+    }
+
+    override fun observerList(owner: LifecycleOwner, observer: Observer<List<CommonUIModel>>) =
+        communication.observeList(owner,observer)
 
 
     override fun chooseFavorites(favorites: Boolean) = interactor.getFavoritesJokes(favorites)
@@ -89,3 +98,5 @@ class BaseViewModel(
         }
     }
 }
+
+fun List<CommonItem>.toUiList() = map{it.to()}

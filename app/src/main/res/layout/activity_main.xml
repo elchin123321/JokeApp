@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:custom = "http://schemas.android.com/apk/res-auto"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     tools:context=".example.MainActivity">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
     <com.ei.android.jokeapp.example.views.FavoriteDataView
         android:id="@+id/favoriteDataView"
         android:layout_width="match_parent"
-        custom:actionButtonText="@string/get_joke"
-        custom:checkBoxText="@string/show_favorite_joke"
+        app:actionButtonText="@string/get_joke"
+        app:checkBoxText="@string/show_favorite_joke"
         android:layout_height="wrap_content"/>
     <com.ei.android.jokeapp.example.views.FavoriteDataView
         android:id="@+id/quoteFavoriteView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        custom:actionButtonText="@string/get_quote"
-        custom:checkBoxText="@string/show_favorite_quote"
+        app:actionButtonText="@string/get_quote"
+        app:checkBoxText="@string/show_favorite_quote"
         />
 
 

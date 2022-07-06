@@ -1,10 +1,10 @@
 package com.ei.android.jokeapp.example.data
 
 import com.ei.android.jokeapp.example.RealmProvider
-import com.ei.android.jokeapp.example.core.Mapper
-import com.ei.android.jokeapp.example.domain.NoCachedJokesException
+import com.ei.android.jokeapp.example.domain.NoCachedDataException
 import io.realm.Realm
 import io.realm.RealmObject
+import io.realm.RealmResults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 class JokeCachedDataSource(
@@ -33,16 +33,25 @@ abstract class BaseCachedDataSource<T: RealmObject, E>(
     ): CacheDataSource<E> {
 
     protected abstract val dbClass:Class<T>
-    override suspend fun getData(): CommonDataModel<E> {
-        realmProvider.provide().use{
+
+    override suspend fun getData() = getRealmData {
+        realmToCommonDataMapper.map(it.random())
+     }
+
+    override suspend fun getDataList() = getRealmData { results->
+        results.map{realmToCommonDataMapper.map(it)}
+    }
+
+    private fun <R> getRealmData(block:(lis:RealmResults<T>)->R):R{
+        realmProvider.provide().use {
             val list = it.where(dbClass).findAll()
-            if(list.isEmpty()){
-                throw NoCachedJokesException()
-            }else{
-                return realmToCommonDataMapper.map(list.random())
-            }
+            if (list.isEmpty())
+                throw NoCachedDataException()
+            else
+                return block.invoke(list)
         }
     }
+
 
     protected abstract fun findRealmObject(realm: Realm, id:E):T?
 

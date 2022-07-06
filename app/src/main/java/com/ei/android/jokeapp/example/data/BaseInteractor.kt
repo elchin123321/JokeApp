@@ -17,6 +17,16 @@ class BaseInteractor<E>(
         }
     }
 
+    override suspend fun getItemList(): List<CommonItem> {
+        return try{
+            commonRepository.getCommonItemList().map {
+                it.map(mapper)
+            }
+        }catch (e:Exception){
+            listOf(CommonItem.Failed(failureHandler.handle(e)))
+        }
+    }
+
     override suspend fun changeFavorites(): CommonItem {
         return try {
             commonRepository.changeStatus().map(mapper)
