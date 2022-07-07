@@ -1,45 +1,83 @@
 package com.ei.android.jokeapp.example.data
 
-import com.ei.android.jokeapp.example.Joke
-import com.ei.android.jokeapp.example.JokeUIModel
 import com.ei.android.jokeapp.example.RealmProvider
-import com.ei.android.jokeapp.example.domain.NoCachedJokesException
+import com.ei.android.jokeapp.example.domain.NoCachedDataException
 import io.realm.Realm
+import io.realm.RealmObject
+import io.realm.RealmResults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+class JokeCachedDataSource(
+    realmProvider: RealmProvider,
+    mapper:JokeRealmMapper,
+    commonDataMapper:JokeRealmToCommonMapper):
+    BaseCachedDataSource<JokeRealmModel, Int>(realmProvider,mapper,commonDataMapper){
+        override val dbClass = JokeRealmModel::class.java
+    override fun findRealmObject(realm: Realm, id: Int)=
+        realm.where(dbClass).equalTo("id",id).findFirst()
 
-class BaseCachedDataSource(
+}
+class QuoteCachedDataSource(
+    realmProvider: RealmProvider,
+    mapper:QuoteRealmMapper,
+    commonDataMapper:QuoteRealmToCommonMapper):
+    BaseCachedDataSource<QuoteRealmModel, String>(realmProvider,mapper,commonDataMapper){
+    override val dbClass = QuoteRealmModel::class.java
+    override fun findRealmObject(realm: Realm, id: String) =
+        realm.where(dbClass).equalTo("id",id).findFirst()
+}
+abstract class BaseCachedDataSource<T: RealmObject, E>(
     private val realmProvider: RealmProvider,
-    private val mapper: JokeDataModelMapper<JokeRealm>
-    ): CacheDataSource {
-    override suspend fun getJoke(): JokeDataModel {
-        realmProvider.provide().use{
-            val jokes = it.where(JokeRealm::class.java).findAll()
-            if(jokes.isEmpty()){
-                throw NoCachedJokesException()
-            }else{
-                return jokes.random().to()
-            }
+    private val mapper: CommonDataModelMapper<T, E>,
+    private val realmToCommonDataMapper: RealmToCommonDataMapper<T,E>
+    ): CacheDataSource<E> {
+
+    protected abstract val dbClass:Class<T>
+
+    override suspend fun getData() = getRealmData {
+        realmToCommonDataMapper.map(it.random())
+     }
+
+    override suspend fun getDataList() = getRealmData { results->
+        results.map{realmToCommonDataMapper.map(it)}
+    }
+
+    private fun <R> getRealmData(block:(lis:RealmResults<T>)->R):R{
+        realmProvider.provide().use {
+            val list = it.where(dbClass).findAll()
+            if (list.isEmpty())
+                throw NoCachedDataException()
+            else
+                return block.invoke(list)
         }
     }
 
+    override suspend fun remove(id: E) = withContext(Dispatchers.IO){
+        realmProvider.provide().use{realm->
+            realm.executeTransaction{
+                findRealmObject(realm, id)?.deleteFromRealm()
+            }
 
-    override suspend fun addOrRemove(id: Int, joke: JokeDataModel): JokeDataModel =
+        }
+    }
+
+    protected abstract fun findRealmObject(realm: Realm, id:E):T?
+
+    override suspend fun addOrRemove(id: E, model: CommonDataModel<E>): CommonDataModel<E> =
         withContext(Dispatchers.IO){
             realmProvider.provide().use{
-                val jokeRealm =
-                    it.where(JokeRealm::class.java).equalTo("id",id).findFirst()
-                return@withContext if(jokeRealm == null){
+                val itemRealm = findRealmObject(it,id)
+                return@withContext if(itemRealm == null){
                     it.executeTransaction { transition->
-                        val newJoke = joke.map(mapper)
-                        transition.insert(newJoke)
+                        val newData = model.map(mapper)
+                        transition.insert(newData)
                     }
-                    joke.changeCached(true)
+                    model.changeCached(true)
                 }else{
                     it.executeTransaction{
-                        jokeRealm.deleteFromRealm()
+                        itemRealm.deleteFromRealm()
                     }
-                    joke.changeCached(false)
+                    model.changeCached(false)
                 }
             }
         }

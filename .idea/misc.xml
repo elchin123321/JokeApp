@@ -3,10 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidProjects/JokeApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.25555555555555554" />
         <entry key="..\:/AndroidProjects/JokeApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.36018518518518516" />
         <entry key="..\:/AndroidProjects/JokeApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/AndroidProjects/JokeApp/app/src/main/res/layout/activity_my_app.xml" value="0.35778985507246375" />
+        <entry key="..\:/AndroidProjects/JokeApp/app/src/main/res/layout/common_data_item.xml" value="0.2078804347826087" />
         <entry key="..\:/AndroidProjects/JokeApp/app/src/main/res/layout/favorite_data_view.xml" value="0.23052536231884058" />
+        <entry key="..\:/AndroidProjects/JokeApp/app/src/main/res/layout/no_favorite_item.xml" value="0.2078804347826087" />
       </map>
     </option>
   </component>

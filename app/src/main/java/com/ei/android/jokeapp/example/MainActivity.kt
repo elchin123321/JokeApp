@@ -2,46 +2,54 @@ package com.ei.android.jokeapp.example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.*
+import androidx.recyclerview.widget.RecyclerView
 import com.ei.android.jokeapp.R
 import com.ei.android.jokeapp.example.views.*
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var baseViewModel: BaseViewModel
+    lateinit var viewModel: BaseViewModel<Int>
+
+    lateinit var adapter:CommonDataRecyclerAdapter<Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        baseViewModel = (application as JokeApp).baseViewModel
-
+        viewModel = (application as JokeApp).baseViewModel
+        val jokeCommunication = (application as JokeApp).jokeCommunication
         val favoriteDataView = findViewById<FavoriteDataView>(R.id.favoriteDataView)
-
-        favoriteDataView.listenChanges { isChecked ->
-            baseViewModel.chooseFavorites(isChecked)
-        }
-        favoriteDataView.handleChangeButton {
-            baseViewModel.changeJokeStatus()
-        }
-        favoriteDataView.handleActionButton {
-            baseViewModel.getJoke()
-        }
-
-        baseViewModel.observe(this,{state->
+        favoriteDataView.linkWith(viewModel)
+        viewModel.observe(this,{ state->
             favoriteDataView.show(state)
         })
 
 
 
-
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val observer: (t: List<CommonUIModel<Int>>) -> Unit = { _ ->
+            adapter.update()
+        }
+        adapter = CommonDataRecyclerAdapter(object :
+            CommonDataRecyclerAdapter.FavoriteItemClickListener<Int> {
+            override fun change(id: Int) {
+                Snackbar.make(
+                    favoriteDataView,
+                    R.string.remove_from_favorites,
+                    Snackbar.LENGTH_SHORT
+                ).setAction(R.string.yes) {
+                    val position = viewModel.changeItemStatus(id,)
+                    adapter.update(Pair(false, position))
+                }.show()
+            }
+        }, jokeCommunication)
+        recyclerView.adapter = adapter
+        viewModel.observeList(this,observer)
+        viewModel.getItemList()
 
     }
 
-    override fun onDestroy() {
 
-        super.onDestroy()
-    }
 }
 interface Show<T>{
     fun show(arg:T)

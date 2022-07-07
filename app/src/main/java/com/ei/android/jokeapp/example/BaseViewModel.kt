@@ -2,35 +2,55 @@ package com.ei.android.jokeapp.example
 
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.*
-import com.ei.android.jokeapp.example.data.JokeInteractor
-import com.ei.android.jokeapp.example.data.JokeRepository
+import com.ei.android.jokeapp.example.data.CommonInteractor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BaseViewModel(
-    private val interactor: JokeInteractor,
-    private val communication: Communication,
+class BaseViewModel<T>(
+    private val interactor: CommonInteractor<T>,
+    private val communication: CommonCommunication<T>,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-):ViewModel() {
+) : ViewModel(), CommonViewModel<T> {
 
-
-    fun getJoke() = viewModelScope.launch(dispatcher) {
-        communication.showState(State.Progress)
-        interactor.getJoke().to().show(communication)
+    override fun getItem() {
+        viewModelScope.launch(dispatcher) {
+            communication.showState(State.Progress)
+            interactor.getItem().to().show(communication)
+        }
     }
 
-
-    fun chooseFavorites(favorites: Boolean) = interactor.getFavoritesJokes(favorites)
-
-
-    fun changeJokeStatus() = viewModelScope.launch(dispatcher) {
-        if (communication.isState(State.INITIAL))
-            interactor.changeFavorites().to().show(communication)
+    override fun getItemList() {
+        viewModelScope.launch(dispatcher) {
+            communication.showDataList(interactor.getItemList().toUiList())
+        }
     }
 
-    fun observe(owner: LifecycleOwner, observer: Observer<State>) = communication.observe(owner, observer)
+    override fun changeItemStatus() {
+        viewModelScope.launch(dispatcher) {
+            if (communication.isState(State.INITIAL)) {
+                interactor.changeFavorites().to().show(communication)
+                communication.showDataList(interactor.getItemList().toUiList())
+            }
+        }
+    }
 
+    override fun changeItemStatus(id: T): Int {
+        val position = communication.removeItem(id)
+        viewModelScope.launch(dispatcher) {
+            interactor.removeItem(id)
+        }
+        return position
+    }
+
+    override fun chooseFavorites(favorites: Boolean) = interactor.getFavorites(favorites)
+    override fun observe(owner: LifecycleOwner, observer: Observer<State>) =
+        communication.observe(owner, observer)
+
+    override fun observeList(
+        owner: LifecycleOwner,
+        observer: Observer<List<CommonUIModel<T>>>
+    ) = communication.observeList(owner, observer)
 
     sealed class State {
         protected abstract val type: Int
@@ -85,4 +105,8 @@ class BaseViewModel(
             override val type = FAILED
         }
     }
+
 }
+fun <T> List<CommonItem<T>>.toUiList() = map{it.to()}
+
+

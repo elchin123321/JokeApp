@@ -8,6 +8,8 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import com.ei.android.jokeapp.R
 import com.ei.android.jokeapp.example.BaseViewModel
+import com.ei.android.jokeapp.example.CommonItemViewModel
+import com.ei.android.jokeapp.example.CommonViewModel
 
 class FavoriteDataView: LinearLayout{
     private lateinit var checkBox:CheckBox
@@ -23,7 +25,7 @@ class FavoriteDataView: LinearLayout{
         init(attrs)
     }
 
-    private fun init(attrs: AttributeSet){
+    private fun init(attrs: AttributeSet) {
         orientation = VERTICAL
         (context
             .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
@@ -33,30 +35,33 @@ class FavoriteDataView: LinearLayout{
         textView = linear.findViewById(R.id.textView)
         changeButton = linear.findViewById(R.id.iconView)
         progress = getChildAt(2) as CorrectProgress
-        progress.visibility = View.INVISIBLE
         actionButton = getChildAt(3) as CorrectButton
-        context.theme.obtainStyledAttributes(attrs,R.styleable.FavoriteDataView,0,0).apply {
-            try{
+
+        context.theme.obtainStyledAttributes(attrs, R.styleable.FavoriteDataView, 0, 0).apply {
+            try {
                 val actionButtonText = getString(R.styleable.FavoriteDataView_actionButtonText)
                 val checkBoxText = getString(R.styleable.FavoriteDataView_checkBoxText)
-                actionButton.text = actionButtonText
                 checkBox.text = checkBoxText
-            }finally {
+                actionButton.text = actionButtonText
+                progress.visibility = View.INVISIBLE
+            } finally {
                 recycle()
             }
         }
     }
-
-    fun listenChanges(block: (checked:Boolean)->Unit) =
-        checkBox.setOnCheckedChangeListener{_, isChecked->
-            block.invoke(isChecked)
+    fun linkWith(commonViewModel: CommonItemViewModel) {
+        checkBox.setOnCheckedChangeListener { _, isChecked ->
+            commonViewModel.chooseFavorites(isChecked)
         }
-    fun handleChangeButton(block: () ->Unit) = changeButton.setOnClickListener {
-        block.invoke()
+        changeButton.setOnClickListener {
+            commonViewModel.changeItemStatus()
+        }
+        actionButton.setOnClickListener {
+            commonViewModel.getItem()
+        }
     }
-    fun handleActionButton(block:()->Unit) = actionButton.setOnClickListener {
-        block.invoke()
-    }
+
+
 
     fun show(state: BaseViewModel.State) = state.show(progress,actionButton,textView,changeButton)
 
