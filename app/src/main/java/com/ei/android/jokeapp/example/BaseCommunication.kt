@@ -4,28 +4,37 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
-class BaseCommunication:CommonCommunication {
+class BaseCommunication<T> : CommonCommunication<T> {
     private val liveData = MutableLiveData<BaseViewModel.State>()
-
-    private val listLiveData = MutableLiveData<List<CommonUIModel>>()
-    override fun showDataList(list: List<CommonUIModel>) {
-        listLiveData.value = list
-    }
-
+    override fun isState(type: Int) = liveData.value?.isType(type) ?: false
     override fun showState(state: BaseViewModel.State) {
         liveData.value = state
     }
 
-
-
-    override fun observe(owner: LifecycleOwner, observer: Observer<BaseViewModel.State>) {
-        liveData.observe(owner,observer)
+    private val listLiveData = MutableLiveData<ArrayList<CommonUIModel<T>>>()
+    override fun removeItem(id: T): Int {
+        val found = listLiveData.value?.find {
+            it.matches(id)
+        }
+        val position = listLiveData.value?.indexOf(found) ?: -1
+        found?.let {
+            listLiveData.value?.remove(it)
+        }
+        return position
     }
 
-    override fun observeList(owner: LifecycleOwner, observer: Observer<List<CommonUIModel>>) {
-        listLiveData.observe(owner,observer)
+    override fun showDataList(list: List<CommonUIModel<T>>) {
+        listLiveData.value = ArrayList(list)
     }
 
-    override fun isState(type: Int) = liveData.value?.isType(type)?:false
+    override fun observeList(owner: LifecycleOwner, observer: Observer<List<CommonUIModel<T>>>) {
+        listLiveData.observe(owner, observer)
+    }
 
+    override fun observe(owner: LifecycleOwner, observer: Observer<BaseViewModel.State>) =
+        liveData.observe(owner, observer)
+
+    override fun getList(): List<CommonUIModel<T>> {
+        return listLiveData.value ?: emptyList()
+    }
 }

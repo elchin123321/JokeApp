@@ -7,42 +7,50 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BaseViewModel(
-    private val interactor: CommonInteractor,
-    private val communication: CommonCommunication,
+class BaseViewModel<T>(
+    private val interactor: CommonInteractor<T>,
+    private val communication: CommonCommunication<T>,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-):ViewModel(), CommonViewModel {
+) : ViewModel(), CommonViewModel<T> {
 
-
-     override fun getItem() {
-         viewModelScope.launch(dispatcher) {
+    override fun getItem() {
+        viewModelScope.launch(dispatcher) {
             communication.showState(State.Progress)
             interactor.getItem().to().show(communication)
         }
-     }
+    }
 
     override fun getItemList() {
-        viewModelScope.launch (dispatcher){
-           communication.showDataList(interactor.getItemList().toUiList())
+        viewModelScope.launch(dispatcher) {
+            communication.showDataList(interactor.getItemList().toUiList())
         }
     }
 
-    override fun observerList(owner: LifecycleOwner, observer: Observer<List<CommonUIModel>>) =
-        communication.observeList(owner,observer)
-
-
-    override fun chooseFavorites(favorites: Boolean) = interactor.getFavoritesJokes(favorites)
-
-
     override fun changeItemStatus() {
         viewModelScope.launch(dispatcher) {
-        if (communication.isState(State.INITIAL))
-            interactor.changeFavorites().to().show(communication)
-    }
+            if (communication.isState(State.INITIAL)) {
+                interactor.changeFavorites().to().show(communication)
+                communication.showDataList(interactor.getItemList().toUiList())
+            }
+        }
     }
 
-    override fun observe(owner: LifecycleOwner, observer: Observer<State>) = communication.observe(owner, observer)
+    override fun changeItemStatus(id: T): Int {
+        val position = communication.removeItem(id)
+        viewModelScope.launch(dispatcher) {
+            interactor.removeItem(id)
+        }
+        return position
+    }
 
+    override fun chooseFavorites(favorites: Boolean) = interactor.getFavorites(favorites)
+    override fun observe(owner: LifecycleOwner, observer: Observer<State>) =
+        communication.observe(owner, observer)
+
+    override fun observeList(
+        owner: LifecycleOwner,
+        observer: Observer<List<CommonUIModel<T>>>
+    ) = communication.observeList(owner, observer)
 
     sealed class State {
         protected abstract val type: Int
@@ -97,6 +105,8 @@ class BaseViewModel(
             override val type = FAILED
         }
     }
-}
 
-fun List<CommonItem>.toUiList() = map{it.to()}
+}
+fun <T> List<CommonItem<T>>.toUiList() = map{it.to()}
+
+

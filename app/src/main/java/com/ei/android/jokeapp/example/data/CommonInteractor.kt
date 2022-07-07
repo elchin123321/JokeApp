@@ -2,9 +2,11 @@ package com.ei.android.jokeapp.example.data
 
 import com.ei.android.jokeapp.example.CommonItem
 
-interface CommonInteractor {
-    suspend fun getItem(): CommonItem
-    suspend fun getItemList(): List<CommonItem>
-    suspend fun changeFavorites(): CommonItem
-    fun getFavoritesJokes(favorites: Boolean)
+interface CommonInteractor<E> {
+    suspend fun getItem(): CommonItem<E>
+    suspend fun getItemList(): List<CommonItem<E>>
+    suspend fun changeFavorites(): CommonItem<E>
+    fun getFavorites(favorites: Boolean)
+    suspend fun removeItem(id:E)
+
 }

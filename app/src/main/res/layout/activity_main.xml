@@ -19,13 +19,7 @@
         app:actionButtonText="@string/get_joke"
         app:checkBoxText="@string/show_favorite_joke"
         android:layout_height="wrap_content"/>
-    <com.ei.android.jokeapp.example.views.FavoriteDataView
-        android:id="@+id/quoteFavoriteView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:actionButtonText="@string/get_quote"
-        app:checkBoxText="@string/show_favorite_quote"
-        />
+
 
 
 </LinearLayout>
