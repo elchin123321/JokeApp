@@ -12,6 +12,7 @@ class JokeApp: Application() {
     lateinit var baseViewModel: BaseViewModel<Int>
     lateinit var quoteViewModel: BaseViewModel<String>
     lateinit var jokeCommunication: CommonCommunication<Int>
+    lateinit var quoteCommunication: CommonCommunication<String>
 
     override fun onCreate() {
         super.onCreate()
@@ -38,6 +39,7 @@ class JokeApp: Application() {
         jokeCommunication = BaseCommunication()
         baseViewModel = BaseViewModel(interactor, jokeCommunication)
         //endregion
+        quoteCommunication = BaseCommunication()
         val quoteRepository = BaseRepository(
             QuoteCachedDataSource(realmProvider, QuoteRealmMapper(), QuoteRealmToCommonMapper()),
             QuoteCloudDataSource(retrofit.create(QuoteService::class.java)),
@@ -46,7 +48,7 @@ class JokeApp: Application() {
         val quoteMapper = CommonSuccessMapper<String>()
         quoteViewModel = BaseViewModel(
             BaseInteractor(quoteRepository, failureHandler, quoteMapper),
-            BaseCommunication()
+            quoteCommunication
         )
     }
 }

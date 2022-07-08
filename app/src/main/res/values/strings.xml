@@ -13,4 +13,6 @@
     <string name="get_quote">GET QUOTE</string>
     <string name="remove_from_favorites">Remove from favorites?</string>
     <string name="yes">yes</string>
+    <string name="jokes">Jokes</string>
+    <string name="quotes">Quotes</string>
 </resources>
