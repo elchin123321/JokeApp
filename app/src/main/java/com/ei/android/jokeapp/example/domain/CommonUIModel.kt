@@ -16,6 +16,7 @@ abstract class CommonUIModel<T>(private val first: String, private val second: S
     fun show(showText: ShowText) = showText.show(text())
     open fun change(listener:CommonDataRecyclerAdapter.FavoriteItemClickListener<T>) = Unit
     open fun matches(id:T) : Boolean = false
+    open fun same(model:CommonUIModel<T>):Boolean = false
 
 }
 
@@ -28,6 +29,9 @@ class FavoriteCommonUIModel<E>(private val id:E, text: String, punchline: String
         listener.change(id)
 
     override fun matches(id: E): Boolean = this.id == id
+    override fun same(model: CommonUIModel<E>): Boolean {
+        return model is FavoriteCommonUIModel<E> && model.id == id
+    }
 }
 class FailedCommonUIModel<E>(private val text: String): CommonUIModel<E>(text, "") {
     override fun text() = text

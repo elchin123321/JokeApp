@@ -35,12 +35,12 @@ class BaseViewModel<T>(
         }
     }
 
-    override fun changeItemStatus(id: T): Int {
-        val position = communication.removeItem(id)
+    override fun changeItemStatus(id: T) {
         viewModelScope.launch(dispatcher) {
             interactor.removeItem(id)
+            communication.showDataList(interactor.getItemList().toUiList())
         }
-        return position
+
     }
 
     override fun chooseFavorites(favorites: Boolean) = interactor.getFavorites(favorites)

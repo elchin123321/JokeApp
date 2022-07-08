@@ -4,7 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 
 interface CommonViewModel<T> : CommonItemViewModel {
-    fun changeItemStatus(id: T) : Int
+    fun changeItemStatus(id: T)
     fun observe(owner: LifecycleOwner, observer: Observer<BaseViewModel.State>)
     fun observeList(owner: LifecycleOwner, observer: Observer<List<CommonUIModel<T>>>)
 }
