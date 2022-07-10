@@ -2,6 +2,7 @@ package com.ei.android.jokeapp.example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.ei.android.jokeapp.R
@@ -19,17 +20,33 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val viewPager = findViewById<ViewPager2>(R.id.viewPager)
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
-        viewPager.adapter = PagerAdapter(this)
-        TabLayoutMediator(tabLayout,viewPager){tab, position->
-            tab.text = getString(if(position == 0)R.string.jokes else R.string.quotes)
-        }.attach()
+        val tabChosen: (Boolean)->Unit = {
+            jokesChosen->
+            if(jokesChosen)
+                show(JokesFragment(),)
+            else
+                show(QuotesFragment())
+        }
+        tabLayout.addOnTabSelectedListener(TabListener(tabChosen))
+
 
 
     }
+    private fun show(fragment: Fragment){
+            supportFragmentManager.beginTransaction()
+            .replace(R.id.container,fragment)
+            .commit()
+    }
 
+    private class TabListener(private val tabChosen:(Boolean)->Unit):
+        TabLayout.OnTabSelectedListener{
+        override fun onTabSelected(tab: TabLayout.Tab?) = tabChosen.invoke(tab?.position == 0)
 
+        override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
+
+        override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+    }
 }
 interface Show<T>{
     fun show(arg:T)
