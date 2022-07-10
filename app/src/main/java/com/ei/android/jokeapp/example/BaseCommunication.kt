@@ -3,6 +3,8 @@ package com.ei.android.jokeapp.example
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
+import com.ei.android.jokeapp.example.views.CommonDiffUtilCallback
 
 class BaseCommunication<T> : CommonCommunication<T> {
     private val liveData = MutableLiveData<BaseViewModel.State>()
@@ -12,7 +14,7 @@ class BaseCommunication<T> : CommonCommunication<T> {
     }
 
     private val listLiveData = MutableLiveData<ArrayList<CommonUIModel<T>>>()
-    override fun removeItem(id: T): Int {
+   /* override fun removeItem(id: T): Int {
         val found = listLiveData.value?.find {
             it.matches(id)
         }
@@ -21,9 +23,11 @@ class BaseCommunication<T> : CommonCommunication<T> {
             listLiveData.value?.remove(it)
         }
         return position
-    }
+    }*/
 
     override fun showDataList(list: List<CommonUIModel<T>>) {
+        val callback = CommonDiffUtilCallback(listLiveData.value?: emptyList(),list)
+        diffResult = DiffUtil.calculateDiff(callback)
         listLiveData.value = ArrayList(list)
     }
 
@@ -37,4 +41,7 @@ class BaseCommunication<T> : CommonCommunication<T> {
     override fun getList(): List<CommonUIModel<T>> {
         return listLiveData.value ?: emptyList()
     }
+
+    private lateinit var diffResult: DiffUtil.DiffResult
+    override fun getDiffResult() = diffResult
 }

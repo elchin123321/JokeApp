@@ -20,20 +20,15 @@ class CommonDataRecyclerAdapter<T>(
     }
 
     fun update() {
-        notifyDataSetChanged()
+        val result = communication.getDiffResult()
+        result.dispatchUpdatesTo(this)
+       // notifyDataSetChanged()
     }
 
-    fun update(pair: Pair<Boolean, Int>) {
-        if (pair.first) {
-            notifyItemInserted(pair.second)
-        } else {
-            notifyItemRemoved(pair.second)
-        }
-    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommonDataViewHolder<T> {
         val emptyList = viewType == 0
-        System.out.println(communication.getList().size.toString()+"asdasda s////////////")
         val view = LayoutInflater.from(parent.context).inflate(
             if (emptyList)
                 R.layout.no_favorite_item

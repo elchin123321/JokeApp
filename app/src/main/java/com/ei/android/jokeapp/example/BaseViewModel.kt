@@ -7,9 +7,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BaseViewModel<T>(
+open class BaseViewModel<T>(
     private val interactor: CommonInteractor<T>,
-    private val communication: CommonCommunication<T>,
+    val communication: CommonCommunication<T>,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel(), CommonViewModel<T> {
 
@@ -35,12 +35,12 @@ class BaseViewModel<T>(
         }
     }
 
-    override fun changeItemStatus(id: T): Int {
-        val position = communication.removeItem(id)
+    override fun changeItemStatus(id: T) {
         viewModelScope.launch(dispatcher) {
             interactor.removeItem(id)
+            communication.showDataList(interactor.getItemList().toUiList())
         }
-        return position
+
     }
 
     override fun chooseFavorites(favorites: Boolean) = interactor.getFavorites(favorites)
